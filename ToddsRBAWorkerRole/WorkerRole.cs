@@ -8,9 +8,13 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
-using Microsoft.WindowsAzure.Storage;
 
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
+
+using ToddsRBASampleCommon;
 
 namespace ToddsRBAWorkerRole
 {
@@ -50,22 +54,10 @@ namespace ToddsRBAWorkerRole
                     System.Threading.Thread.Sleep(5000);
                 }
             }
-            //Trace.TraceInformation("ToddsRBAWorkerRole is running");
-
-            //try
-            //{
-            //    this.RunAsync(this.cancellationTokenSource.Token).Wait();
-            //}
-            //finally
-            //{
-            //    this.runCompleteEvent.Set();
-            //}
         }
 
         public override bool OnStart()
         {
-            string connString = RoleEnvironment.GetConfigurationSettingValue("RBAStorage");
-
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
 
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
@@ -97,45 +89,26 @@ namespace ToddsRBAWorkerRole
             Trace.TraceInformation("ToddsRBAWorkerRole has stopped");
         }
 
-        private async Task RunAsync(CancellationToken cancellationToken)
+        private void ProcessQueueMessage(CloudQueueMessage cMsg)
         {
-            CloudQueueMessage msg = null;
+            var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
 
-            // TODO: Replace the following with your own logic.
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                try
-                {
-                    msg = this.m_messageQueue.GetMessage();
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("messages");
+            table.CreateIfNotExists();
 
-                    if (msg != null)
-                    {
-                        ProcessQueueMessage(msg);
-                    }
-                    else
-                    {
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                }
-                catch (StorageException e)
-                {
-                    if (msg != null && msg.DequeueCount > 5)
-                    {
-                        this.m_messageQueue.DeleteMessage(msg);
-                    }
+            // Create the TableOperation object that inserts the customer entity.
 
-                    System.Threading.Thread.Sleep(5000);
-                }
+            MessageItem msg = new MessageItem(cMsg.AsString);
 
-                Trace.TraceInformation("Working");
-                await Task.Delay(1000);
-            }
-        }
+            TableOperation insertOperation = TableOperation.Insert(msg);
 
-        private void ProcessQueueMessage (CloudQueueMessage cMsg)
-        {
+            // Execute the insert operation.
+            table.Execute(insertOperation);
+
             this.m_messageQueue.DeleteMessage(cMsg);
             return;
         }
     }
 }
+
