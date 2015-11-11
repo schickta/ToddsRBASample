@@ -12,7 +12,12 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
     <ConfigurationSettings>
+      <Setting name="RBAStorage" />
     </ConfigurationSettings>
   </WebRole>
-  <WorkerRole name="ToddsRBAWorkerRole" vmsize="Small" />
+  <WorkerRole name="ToddsRBAWorkerRole" vmsize="Small">
+    <ConfigurationSettings>
+      <Setting name="RBAStorage" />
+    </ConfigurationSettings>
+  </WorkerRole>
 </ServiceDefinition>

@@ -6,6 +6,10 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
+using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.ServiceRuntime;
+
 namespace ToddsRBAWebRole
 {
     public class MvcApplication : System.Web.HttpApplication

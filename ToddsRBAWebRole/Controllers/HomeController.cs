@@ -4,6 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.ServiceRuntime;
+
 namespace ToddsRBAWebRole.Controllers
 {
     public class HomeController : Controller
@@ -29,6 +33,16 @@ namespace ToddsRBAWebRole.Controllers
 
         public ActionResult SendForm()
         {
+            string connString = RoleEnvironment.GetConfigurationSettingValue("RBAStorage");
+
+            var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
+
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            CloudQueue messageQueue = queueClient.GetQueueReference("messageq");
+            messageQueue.CreateIfNotExists();
+
+            messageQueue.AddMessage(new CloudQueueMessage("Hi There"));
+
             return View("Index");
         }
     }

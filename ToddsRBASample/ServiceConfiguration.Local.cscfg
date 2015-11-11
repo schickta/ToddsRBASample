@@ -3,10 +3,13 @@
   <Role name="ToddsRBAWebRole">
     <Instances count="1" />
     <ConfigurationSettings>
+      <Setting name="RBAStorage" value="DefaultEndpointsProtocol=https;AccountName=toddsrbasample;AccountKey=EOas7jGowv0lG18PRBiGh+8FI9YUMc9Bz0BebKi0GP0VemEtxC7CCLQozdmJTUt4dPRie6QdJwxiGLIwNTlv0A==" />
     </ConfigurationSettings>
   </Role>
   <Role name="ToddsRBAWorkerRole">
     <Instances count="1" />
-    <ConfigurationSettings />
+    <ConfigurationSettings>
+      <Setting name="RBAStorage" value="DefaultEndpointsProtocol=https;AccountName=toddsrbasample;AccountKey=EOas7jGowv0lG18PRBiGh+8FI9YUMc9Bz0BebKi0GP0VemEtxC7CCLQozdmJTUt4dPRie6QdJwxiGLIwNTlv0A==" />
+    </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
