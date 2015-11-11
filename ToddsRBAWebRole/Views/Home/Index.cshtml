@@ -2,11 +2,19 @@
     ViewBag.Title = "Home Page";
 }
 
+
 @using (Html.BeginForm("SendForm", "Home", FormMethod.Post))
 {
     <div style="margin-top: 50px; margin-bottom: 50px;">
         @Html.TextBox("message");
         <button type="submit" id="btnSave">Send</button>
+    </div>
+
+    <div>
+        <a class="refreshlink" name="refreshlink" id="refreshlink" href="#">Refresh</a> 
+
+        <ul style="list-style-type:disc" id="msglist">
+        </ul>
     </div>
     
     <div class="jumbotron">
@@ -37,3 +45,32 @@
         </div>
     </div>
 }
+
+<script type="text/javascript">
+
+    function poplist() {
+
+        $.getJSON("/Home/GetMessages",
+            function (mydata) {
+
+                var select = $("#msglist");
+                select.empty();
+
+                $.each(mydata,
+                    function (index, itemData) {
+                        select.append($('<li>', { text: itemData.RowKey }))
+                });
+            }
+        );
+    }
+
+    function loadControls(jQuery) {
+
+        poplist();
+
+        $('.refreshlink').click(function () {
+            poplist();
+        });
+    };
+
+</script>

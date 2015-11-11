@@ -13,6 +13,10 @@ namespace ToddsRBASampleCommon
 {
     public class MessageItem : TableEntity
     {
+        public MessageItem()
+        {
+        }
+
         public MessageItem(string msg)
         {
             this.PartitionKey = "1";
