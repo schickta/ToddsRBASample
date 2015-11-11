@@ -5,6 +5,8 @@
 
 @using (Html.BeginForm("SendForm", "Home", FormMethod.Post))
 {
+    // Banner
+    
     <div class="jumbotron" style="margin-top: 50px;">
         <h1 style="margin-bottom: 0;">Todd's Cloud Services Sample</h1>
         <h3 style="margin-left: 20px; margin-top: 0;">For RBA</h3>
@@ -18,12 +20,16 @@
         </ol>
     </div>
     
+    // Text box for message entry, and Send button.
+    
     <div style="margin-top: 50px; margin-bottom: 50px; width: 100%;">
         <p>Enter your message here and click Send</p>
         @Html.TextBox("message", "", new { style = "width: 600px" })
         <button type="submit" id="btnSave">Send</button>
     </div>
 
+    // The message list that is populated/refreshed by the poplist function.
+    
     <div>
         <p>Messages retreived from the Table Store <a class="refreshlink" style="margin-left: 50px;" name="refreshlink" id="refreshlink" href="#">Refresh</a> </p>
 
@@ -33,6 +39,10 @@
 }
 
 <script type="text/javascript">
+    
+    // This function is for initializing and refreshing the message list. It makes a call to the
+    // Home/GetMessages controller to get a json list of messages stored in Azure Table storage. It then
+    // re-populates msglist.
 
     function poplist() {
 
@@ -49,6 +59,9 @@
             }
         );
     }
+
+    // This function is called when the html document has been loaded (see Shared/_Layout.cshtml). 
+    // It's purpose is to initialize the messages list, and to set the "refresh" link click event handler.
 
     function loadControls(jQuery) {
 

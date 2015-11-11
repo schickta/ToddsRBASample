@@ -11,6 +11,13 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace ToddsRBASampleCommon
 {
+    /// ----------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// MessageItem is a simple class which specializes TableEntity and is used to store/retreive string messages
+    /// from Azure Table storage.
+    /// </summary>
+    /// ---------------------------------------------------------------------------------------------------------
+    /// 
     public class MessageItem : TableEntity
     {
         public MessageItem()

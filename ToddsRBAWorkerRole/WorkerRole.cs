@@ -23,8 +23,20 @@ namespace ToddsRBAWorkerRole
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
 
+        /// <summary>
+        /// m_messageQueue is a handle to the queue. A reference is obtained upon startup of the Role, then
+        /// is polled and processed continually during the Run operation.
+        /// </summary>
+        /// 
         private CloudQueue m_messageQueue = null;
 
+        /// =-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Run: This method continually polls the queue, waiting on an incoming message. When obtained, the
+        /// message is saved to Table Storage, then is dequeued.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------------------
+        /// 
         public override void Run()
         {
             CloudQueueMessage msg = null;
@@ -56,6 +68,13 @@ namespace ToddsRBAWorkerRole
             }
         }
 
+        /// ----------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// OnStart: Sets m_messageQueue which is a handle to the Azure Storage Queue. The rest is boilerplate.
+        /// </summary>
+        /// <returns></returns>
+        /// ---------------------------------------------------------------------------------------------------
+        /// 
         public override bool OnStart()
         {
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
@@ -77,6 +96,12 @@ namespace ToddsRBAWorkerRole
             return result;
         }
 
+        /// ----------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// OnStop: Boilerplate code, executed when the role is halting.
+        /// </summary>
+        /// ----------------------------------------------------------------------------------------------------
+        /// 
         public override void OnStop()
         {
             Trace.TraceInformation("ToddsRBAWorkerRole is stopping");
@@ -89,24 +114,37 @@ namespace ToddsRBAWorkerRole
             Trace.TraceInformation("ToddsRBAWorkerRole has stopped");
         }
 
+        /// -------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// ProcesQueueMessage: Processes messages by storing them into Azure Table storage, then de-queueing the message.
+        /// </summary>
+        /// <param name="cMsg">The CloudQueueMessage object which contains the queue'd message</param>
+        /// -------------------------------------------------------------------------------------------------------
+        /// 
         private void ProcessQueueMessage(CloudQueueMessage cMsg)
         {
+            // Obtain a reference to the message queue.
+
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
 
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference("messages");
             table.CreateIfNotExists();
 
-            // Create the TableOperation object that inserts the customer entity.
+            // Create a new MessageItem object, passing in our message.
 
             MessageItem msg = new MessageItem(cMsg.AsString);
 
+            // Create and execute a table operation to insert the message.
+
             TableOperation insertOperation = TableOperation.Insert(msg);
 
-            // Execute the insert operation.
             table.Execute(insertOperation);
 
+            // Dequeue the message.
+
             this.m_messageQueue.DeleteMessage(cMsg);
+
             return;
         }
     }

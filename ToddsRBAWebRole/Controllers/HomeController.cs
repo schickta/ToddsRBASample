@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+// Include Azure Storage assemblies
+
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.ServiceRuntime;
@@ -34,12 +36,26 @@ namespace ToddsRBAWebRole.Controllers
             return View();
         }
 
+        /// -------------------------------------------------------------------------------------
+        /// <summary>
+        /// SendForm: This action is meant to be triggered when the "Send" button is clicked on
+        /// the UI. It's purpose is to queue the entered message so that the Worker Role can
+        /// pick it up.
+        /// </summary>
+        /// <param name="message">The message entered via the UI that will be queued</param>
+        /// ------------------------------------------------------------------------------------
+        /// 
         public ActionResult SendForm(string message)
         {
+            // If there is a blank message, we'll use an arbitrary default value.
+
             if (message == null || message.Length == 0)
             {
                 message = "no message was entered by the user";
             }
+
+            // Grab the storage account from the configuration file. Proceed with boilerplate code
+            // to obtain a reference to the Azure Storage queue. Create it if it doesn't exist.
 
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
 
@@ -47,31 +63,40 @@ namespace ToddsRBAWebRole.Controllers
             CloudQueue messageQueue = queueClient.GetQueueReference("messageq");
             messageQueue.CreateIfNotExists();
 
+            // Wrap the message into a CloudQueueMessage and enqueue it.
+
             messageQueue.AddMessage(new CloudQueueMessage(message));
 
             return View("Index");
         }
 
+        /// ----------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetMessages: This action will retreive all messages in Azure Table Storage and return
+        /// them as jSon. It is meant to be called by jquery on the UI side to refresh the 
+        /// list of messages. 
+        /// </summary>
+        /// <returns></returns>
+        /// -----------------------------------------------------------------------------------------------------
+        /// 
         [AcceptVerbs(HttpVerbs.Get)]
         public JsonResult GetMessages ()
         {
+            // Boilerplate code to retrieve the Azure storage string from the configuration, then to retrieve a reference to
+            // the Table Store.
+            
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
 
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference("messages");
             table.CreateIfNotExists();
 
-            // Construct the query operation for all customer entities where PartitionKey="Smith".
+            // Construct the query operation to retrieve all messages (all have PartitionKey = 1).
+
             TableQuery<MessageItem> query = new TableQuery<MessageItem>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "1"));
 
-            // Print the fields for each customer.
-            foreach (MessageItem msg in table.ExecuteQuery(query))
-            {
-                int i = 0;
-            }
+            // Return the result as json.
 
-            //var classificationList = TCListItems.DocumentClassificationList(id);
-            //return (Json(classificationList, JsonRequestBehavior.AllowGet));
             return (Json(table.ExecuteQuery(query), JsonRequestBehavior.AllowGet));
         }
     }
