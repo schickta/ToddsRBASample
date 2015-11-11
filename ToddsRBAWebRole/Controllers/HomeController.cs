@@ -26,5 +26,10 @@ namespace ToddsRBAWebRole.Controllers
 
             return View();
         }
+
+        public ActionResult SendForm()
+        {
+            return View("Index");
+        }
     }
 }
