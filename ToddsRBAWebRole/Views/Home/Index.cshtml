@@ -5,44 +5,30 @@
 
 @using (Html.BeginForm("SendForm", "Home", FormMethod.Post))
 {
-    <div style="margin-top: 50px; margin-bottom: 50px;">
-        @Html.TextBox("message");
+    <div class="jumbotron" style="margin-top: 50px;">
+        <h1 style="margin-bottom: 0;">Todd's Cloud Services Sample</h1>
+        <h3 style="margin-left: 20px; margin-top: 0;">For RBA</h3>
+        <p class="lead" style="margin-top: 25px;">How to use this sample</p>
+        <ol class="lead" style="margin-top: 25px; font-style: normal; font-size: medium;">
+            <li>Enter a message into the text box below and click the Send button</li>
+            <li>Your message will be queued up and processed by the worker role</li>
+            <li>The worker role will insert the message into Azure Table Storage</li>
+            <li>All of the stored messages are listed at the bottom of the page</li>
+            <li>Click Refresh to reload the list</li>
+        </ol>
+    </div>
+    
+    <div style="margin-top: 50px; margin-bottom: 50px; width: 100%;">
+        <p>Enter your message here and click Send</p>
+        @Html.TextBox("message", "", new { style = "width: 600px" })
         <button type="submit" id="btnSave">Send</button>
     </div>
 
     <div>
-        <a class="refreshlink" name="refreshlink" id="refreshlink" href="#">Refresh</a> 
+        <p>Messages retreived from the Table Store <a class="refreshlink" style="margin-left: 50px;" name="refreshlink" id="refreshlink" href="#">Refresh</a> </p>
 
         <ul style="list-style-type:disc" id="msglist">
         </ul>
-    </div>
-    
-    <div class="jumbotron">
-        <h1>ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </div>
     </div>
 }
 
