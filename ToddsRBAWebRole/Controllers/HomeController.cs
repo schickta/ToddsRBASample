@@ -31,8 +31,13 @@ namespace ToddsRBAWebRole.Controllers
             return View();
         }
 
-        public ActionResult SendForm()
+        public ActionResult SendForm(string message)
         {
+            if (message == null || message.Length == 0)
+            {
+                message = "no message was entered by the user";
+            }
+
             string connString = RoleEnvironment.GetConfigurationSettingValue("RBAStorage");
 
             var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("RBAStorage"));
@@ -41,7 +46,7 @@ namespace ToddsRBAWebRole.Controllers
             CloudQueue messageQueue = queueClient.GetQueueReference("messageq");
             messageQueue.CreateIfNotExists();
 
-            messageQueue.AddMessage(new CloudQueueMessage("Hi There"));
+            messageQueue.AddMessage(new CloudQueueMessage(message));
 
             return View("Index");
         }

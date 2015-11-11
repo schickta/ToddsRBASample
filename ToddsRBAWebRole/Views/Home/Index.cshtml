@@ -5,6 +5,7 @@
 @using (Html.BeginForm("SendForm", "Home", FormMethod.Post))
 {
     <div style="margin-top: 50px; margin-bottom: 50px;">
+        @Html.TextBox("message");
         <button type="submit" id="btnSave">Send</button>
     </div>
     
