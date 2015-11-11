@@ -55,12 +55,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Profiles" />
     <Folder Include="ToddsRBAWebRoleContent\" />
     <Folder Include="ToddsRBAWorkerRoleContent\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="ToddsRBAWebRoleContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="ToddsRBAWorkerRoleContent\diagnostics.wadcfgx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\ToddsRBASampleProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
